@@ -10,7 +10,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    // Warna Oranye yang dominan di gambar
+    // Definisi Warna sesuai desain
     final Color mainOrange = const Color(0xFFFF9F43);
     final Color darkOrange = const Color(0xFFFF8800);
 
@@ -19,45 +19,81 @@ class _HomePageState extends State<HomePage> {
         bottom: false,
         child: Stack(
           children: [
-            // --- KONTEN SCROLLABLE ---
+            // --- KONTEN UTAMA (SCROLLABLE) ---
             SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(
-                20,
-                20,
-                20,
-                120,
-              ), // Bottom padding besar agar tidak tertutup nav bar
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeader(),
-                  const SizedBox(height: 25),
-                  _buildSaldoCard(mainOrange, darkOrange),
-                  const SizedBox(height: 25),
-                  _buildMenuIcons(mainOrange),
-                  const SizedBox(height: 25),
-                  _buildEWalletSection(mainOrange),
-                  const SizedBox(height: 25),
-                  _buildSectionTitle('Riwayat Transaksi'),
-                  const SizedBox(height: 8),
-                  _buildEmptyState(
-                    icon: Icons.receipt_long,
-                    text:
-                        'Kamu tidak memiliki transaksi dalam 30 hari terakhir.',
-                    linkText: 'Top Up Sekarang >',
-                    colorIcon: Colors.blueAccent,
-                  ),
-                  const SizedBox(height: 25),
-                  _buildSectionTitle('Transaksi Terakhir'),
-                  const SizedBox(height: 8),
-                  _buildEmptyState(
-                    icon: Icons.history,
-                    text:
-                        'Cek riwayat transaksi kamu di sini setelah kamu melakukan transaksi',
-                    linkText: '', // Tidak ada link
-                    colorIcon: Colors.grey,
-                  ),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  bottom: 120,
+                ), // Ruang untuk Bottom Nav
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    // 1. Header
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: _buildHeader(),
+                    ),
+                    const SizedBox(height: 25),
+
+                    // 2. Kartu Saldo
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: _buildSaldoCard(mainOrange, darkOrange),
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    // 3. Menu Icons (Geser Horizontal)
+                    _buildMenuIcons(context, mainOrange),
+
+                    const SizedBox(height: 25),
+
+                    // 4. E-Wallet Section
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: _buildEWalletSection(),
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    // 5. Riwayat Transaksi (PAKAI GAMBAR ASET)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: _buildSectionTitle('Riwayat Transaksi'),
+                    ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: _buildEmptyState(
+                        // Pastikan nama file ini sesuai dengan yang ada di folder assets/images/
+                        imagePath: 'assets/images/icon_invoice_dollar.png',
+                        text:
+                            'Kamu tidak memiliki transaksi dalam 30 hari terakhir.',
+                        linkText: 'Top Up Sekarang >',
+                      ),
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    // 6. Transaksi Terakhir (PAKAI GAMBAR ASET)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: _buildSectionTitle('Transaksi Terakhir'),
+                    ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: _buildEmptyState(
+                        // Pastikan nama file ini sesuai dengan yang ada di folder assets/images/
+                        imagePath: 'assets/images/icon_invoice_history.png',
+                        text:
+                            'Cek riwayat transaksi kamu di sini setelah kamu melakukan transaksi',
+                        linkText: '',
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -74,12 +110,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // 1. Header (Logo & Profil)
+  // --- WIDGET BUILDER METHODS ---
+
   Widget _buildHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Logo S
         Container(
           width: 45,
           height: 45,
@@ -94,7 +130,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        // Notifikasi & Profil
         Row(
           children: [
             const Icon(Icons.notifications_none_outlined, size: 30),
@@ -114,7 +149,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // 2. Kartu Saldo (Gradient Orange)
   Widget _buildSaldoCard(Color color1, Color color2) {
     return Container(
       width: double.infinity,
@@ -201,52 +235,82 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // 3. Menu Grid Icons (Circle Orange + Black Icon)
-  Widget _buildMenuIcons(Color color) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _menuItem(Icons.sync_alt, "Transfer", color), // Ikon panah bolak balik
-        _menuItem(Icons.account_balance_wallet_outlined, "E-Wallet", color),
-        _menuItem(Icons.payments_outlined, "Setor Tunai", color),
-        _menuItem(Icons.save_alt, "Tarik Tunai", color),
-      ],
+  Widget _buildMenuIcons(BuildContext context, Color color) {
+    final List<Map<String, dynamic>> menus = [
+      {'icon': Icons.swap_horiz, 'label': 'Transfer'},
+      {'icon': Icons.account_balance_wallet_outlined, 'label': 'E-Wallet'},
+      {'icon': Icons.payments_outlined, 'label': 'Setor Tunai'},
+      {'icon': Icons.atm, 'label': 'Tarik Tunai'},
+      {'icon': Icons.grid_view, 'label': 'Semua'},
+    ];
+
+    return SizedBox(
+      height: 90,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: menus.length,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        itemBuilder: (context, index) {
+          // Logika lebar item agar pas 4 di layar
+          double screenWidth = MediaQuery.of(context).size.width;
+          double itemWidth = (screenWidth - 40) / 4;
+
+          return Container(
+            width: itemWidth,
+            margin: const EdgeInsets.only(right: 5),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.orange.shade400,
+                        Colors.deepOrange.shade400,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.orange.withOpacity(0.4),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    menus[index]['icon'],
+                    color: Colors.black87,
+                    size: 26,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  menus[index]['label'],
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
-  Widget _menuItem(IconData icon, String label, Color color) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: color, // Background orange pekat
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.black12), // Sedikit border tipis
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
-                blurRadius: 5,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: Icon(icon, color: Colors.black87, size: 28), // Icon hitam
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-        ),
-      ],
-    );
-  }
-
-  // 4. E-Wallet Section (Mirip Tiket/Card)
-  Widget _buildEWalletSection(Color color) {
+  Widget _buildEWalletSection() {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFFFCC80), // Orange muda/pastel background
+        color: const Color(0xFFFFCC80),
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
@@ -259,7 +323,6 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header "E-Wallet Saya" di dalam kotak
           Padding(
             padding: const EdgeInsets.fromLTRB(15, 12, 15, 0),
             child: const Text(
@@ -267,16 +330,11 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
           ),
-          const Divider(
-            color: Colors.black54,
-            thickness: 0.5,
-          ), // Garis pemisah hitam tipis
-
+          const Divider(color: Colors.black54, thickness: 0.5),
           Padding(
             padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
             child: Row(
               children: [
-                // ShopeePay Card
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.symmetric(
@@ -315,7 +373,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                // OVO Card
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.symmetric(
@@ -352,7 +409,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // 5. Section Title
   Widget _buildSectionTitle(String title) {
     return Row(
       children: [
@@ -366,40 +422,27 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // 6. Empty State (Kotak putih dengan border hitam)
+  // --- BAGIAN UTAMA YANG DIUBAH (Menerima Gambar Aset) ---
   Widget _buildEmptyState({
-    required IconData icon,
+    required String imagePath, // Menerima Path Gambar
     required String text,
     required String linkText,
-    required Color colorIcon,
   }) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F6F8), // Putih keabuan
+        color: const Color(0xFFF5F6F8),
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: Colors.black87,
-          width: 1.2,
-        ), // Border HITAM sesuai gambar
+        border: Border.all(color: Colors.black87, width: 1.2),
       ),
       child: Column(
         children: [
-          // Ilustrasi sederhana menggunakan Icon + Stack
-          Stack(
-            alignment: Alignment.bottomRight,
-            children: [
-              Icon(icon, size: 50, color: Colors.blue.shade200),
-              if (icon == Icons.receipt_long)
-                const Icon(
-                  Icons.monetization_on,
-                  color: Colors.orange,
-                  size: 24,
-                ),
-              if (icon == Icons.history)
-                const Icon(Icons.history, color: Colors.orange, size: 24),
-            ],
+          // Menampilkan Gambar Aset dengan ukuran yang dibatasi
+          SizedBox(
+            height: 80,
+            width: 80,
+            child: Image.asset(imagePath, fit: BoxFit.contain),
           ),
           const SizedBox(height: 15),
           Text(
@@ -422,18 +465,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // 7. Custom Bottom Navbar (Blurry Gradient + Floating QRIS)
   Widget _buildCustomBottomNav(Color color1, Color color2) {
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.bottomCenter,
       children: [
-        // Background Bar
         Container(
           height: 70,
-          margin: const EdgeInsets.only(
-            top: 20,
-          ), // Memberi ruang untuk tombol QRIS yg nongol
+          margin: const EdgeInsets.only(top: 20),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [color1.withOpacity(0.9), color2.withOpacity(0.9)],
@@ -455,7 +494,6 @@ class _HomePageState extends State<HomePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              // Home Button (Lingkaran Putih)
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: const BoxDecoration(
@@ -464,8 +502,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: const Icon(Icons.home, color: Colors.black87, size: 26),
               ),
-              const SizedBox(width: 50), // Jarak untuk QRIS tengah
-              // Settings Button (Icon saja)
+              const SizedBox(width: 50),
               const Icon(
                 Icons.settings_outlined,
                 color: Colors.black87,
@@ -474,17 +511,15 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-
-        // QRIS Floating Button
         Positioned(
-          bottom: 25, // Membuatnya melayang naik
+          bottom: 25,
           child: Column(
             children: [
               Container(
                 width: 65,
                 height: 65,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFB74D), // Warna orange lebih terang
+                  color: const Color(0xFFFFB74D),
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: Colors.white.withOpacity(0.3),
