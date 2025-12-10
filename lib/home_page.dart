@@ -10,7 +10,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    // Definisi Warna sesuai desain
     final Color mainOrange = const Color(0xFFFF9F43);
     final Color darkOrange = const Color(0xFFFF8800);
 
@@ -19,45 +18,41 @@ class _HomePageState extends State<HomePage> {
         bottom: false,
         child: Stack(
           children: [
-            // --- KONTEN UTAMA (SCROLLABLE) ---
+            // KONTEN SCROLLABLE
             SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 120,
-                ), // Ruang untuk Bottom Nav
+                padding: const EdgeInsets.only(bottom: 120),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    // 1. Header
+                    // HEADER (LOGO BARU)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: _buildHeader(),
                     ),
                     const SizedBox(height: 25),
 
-                    // 2. Kartu Saldo
+                    // SALDO CARD
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: _buildSaldoCard(mainOrange, darkOrange),
                     ),
-
                     const SizedBox(height: 25),
 
-                    // 3. Menu Icons (Geser Horizontal)
+                    // MENU ICON (RESPONSIF)
                     _buildMenuIcons(context, mainOrange),
 
                     const SizedBox(height: 25),
 
-                    // 4. E-Wallet Section
+                    // E-WALLET SECTION
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: _buildEWalletSection(),
                     ),
-
                     const SizedBox(height: 25),
 
-                    // 5. Riwayat Transaksi (PAKAI GAMBAR ASET)
+                    // RIWAYAT TRANSAKSI
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: _buildSectionTitle('Riwayat Transaksi'),
@@ -66,7 +61,6 @@ class _HomePageState extends State<HomePage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: _buildEmptyState(
-                        // Pastikan nama file ini sesuai dengan yang ada di folder assets/images/
                         imagePath: 'assets/images/icon_invoice_dollar.png',
                         text:
                             'Kamu tidak memiliki transaksi dalam 30 hari terakhir.',
@@ -76,7 +70,7 @@ class _HomePageState extends State<HomePage> {
 
                     const SizedBox(height: 25),
 
-                    // 6. Transaksi Terakhir (PAKAI GAMBAR ASET)
+                    // TRANSAKSI TERAKHIR
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: _buildSectionTitle('Transaksi Terakhir'),
@@ -85,7 +79,6 @@ class _HomePageState extends State<HomePage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: _buildEmptyState(
-                        // Pastikan nama file ini sesuai dengan yang ada di folder assets/images/
                         imagePath: 'assets/images/icon_invoice_history.png',
                         text:
                             'Cek riwayat transaksi kamu di sini setelah kamu melakukan transaksi',
@@ -97,7 +90,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            // --- BOTTOM NAVIGATION BAR CUSTOM ---
+            // BOTTOM NAVBAR
             Positioned(
               bottom: 0,
               left: 0,
@@ -110,26 +103,21 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // --- WIDGET BUILDER METHODS ---
+  // --- WIDGET KOMPONEN ---
 
+  // 1. HEADER (DIPERBARUI: Menggunakan Logo Gambar)
   Widget _buildHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Container(
-          width: 45,
-          height: 45,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.black87, width: 1.5),
-          ),
-          child: const Center(
-            child: Text(
-              "S",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-          ),
+        // Mengganti Container "S" manual dengan Gambar Aset
+        Image.asset(
+          'assets/images/seabank_logo.png', // Pastikan nama file ini benar
+          width: 50, // Ukuran logo di header (lebih kecil dari landing page)
+          height: 50,
         ),
+
+        // Ikon Notifikasi & Profil
         Row(
           children: [
             const Icon(Icons.notifications_none_outlined, size: 30),
@@ -237,73 +225,75 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildMenuIcons(BuildContext context, Color color) {
     final List<Map<String, dynamic>> menus = [
-      {'icon': Icons.swap_horiz, 'label': 'Transfer'},
+      {'icon': Icons.sync_alt, 'label': 'Transfer'},
       {'icon': Icons.account_balance_wallet_outlined, 'label': 'E-Wallet'},
       {'icon': Icons.payments_outlined, 'label': 'Setor Tunai'},
       {'icon': Icons.atm, 'label': 'Tarik Tunai'},
       {'icon': Icons.grid_view, 'label': 'Semua'},
     ];
 
-    return SizedBox(
-      height: 90,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: menus.length,
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        itemBuilder: (context, index) {
-          // Logika lebar item agar pas 4 di layar
-          double screenWidth = MediaQuery.of(context).size.width;
-          double itemWidth = (screenWidth - 40) / 4;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double availableWidth = constraints.maxWidth;
+        double itemWidth = (availableWidth - 20) / 4;
 
-          return Container(
-            width: itemWidth,
-            margin: const EdgeInsets.only(right: 5),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.orange.shade400,
-                        Colors.deepOrange.shade400,
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.orange.withOpacity(0.4),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
+        return SizedBox(
+          height: 100,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: menus.length,
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            itemBuilder: (context, index) {
+              return Container(
+                width: itemWidth,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.orange.shade400,
+                            Colors.deepOrange.shade400,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.orange.withOpacity(0.4),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Icon(
-                    menus[index]['icon'],
-                    color: Colors.black87,
-                    size: 26,
-                  ),
+                      child: Icon(
+                        menus[index]['icon'],
+                        color: Colors.black87,
+                        size: 28,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      menus[index]['label'],
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  menus[index]['label'],
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -422,9 +412,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // --- BAGIAN UTAMA YANG DIUBAH (Menerima Gambar Aset) ---
   Widget _buildEmptyState({
-    required String imagePath, // Menerima Path Gambar
+    required String imagePath,
     required String text,
     required String linkText,
   }) {
@@ -438,7 +427,6 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Column(
         children: [
-          // Menampilkan Gambar Aset dengan ukuran yang dibatasi
           SizedBox(
             height: 80,
             width: 80,

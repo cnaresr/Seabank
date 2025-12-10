@@ -1,6 +1,5 @@
-// File: lib/main.dart
 import 'package:flutter/material.dart';
-import 'home_page.dart'; // PENTING: Import file yang baru dibuat
+import 'landing_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,11 +14,30 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Finance App UI',
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFF5F5F5), // Background umum
-        primarySwatch: Colors.orange,
-        fontFamily: 'Roboto', 
+        scaffoldBackgroundColor: const Color(0xFFFFFAF5),
+        fontFamily: 'Roboto',
       ),
-      home: const HomePage(), // Memanggil class dari file home_page.dart
+      // --- LOGIKA RESPONSIF (LAPTOP vs HP) ---
+      builder: (context, child) {
+        final screenWidth = MediaQuery.of(context).size.width;
+
+        // Jika layar lebar (Laptop/Web), batasi lebarnya jadi 400px
+        if (screenWidth > 500) {
+          return Scaffold(
+            backgroundColor: Colors.grey[200], // Background luar
+            body: Center(
+              child: SizedBox(
+                width: 400, // Lebar statis agar mirip HP
+                child: child,
+              ),
+            ),
+          );
+        }
+
+        // Jika di HP asli, tampilkan normal
+        return child!;
+      },
+      home: const LandingPage(), // Mulai dari Landing Page
     );
   }
 }
