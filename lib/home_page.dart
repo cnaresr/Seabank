@@ -11,6 +11,9 @@ class _HomePageState extends State<HomePage> {
   // Variabel untuk mengontrol status visibilitas saldo
   bool _isBalanceVisible = true;
 
+  // Variabel untuk mendeteksi apakah tombol QRIS sedang ditekan
+  bool _isQrisPressed = false;
+
   @override
   Widget build(BuildContext context) {
     final Color mainOrange = const Color(0xFFFF9F43);
@@ -36,7 +39,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 25),
 
-                    // SALDO CARD (Logika Sembunyikan Saldo ada di sini)
+                    // SALDO CARD
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: _buildSaldoCard(mainOrange, darkOrange),
@@ -132,7 +135,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // --- BAGIAN YANG DIUBAH (SALDO CARD) ---
   Widget _buildSaldoCard(Color color1, Color color2) {
     return Container(
       width: double.infinity,
@@ -168,7 +170,6 @@ class _HomePageState extends State<HomePage> {
               ),
               Row(
                 children: const [
-                  // Mengubah warna tanda tambah (+) menjadi Hitam
                   Text(
                     "Tambah Saldo ",
                     style: TextStyle(color: Colors.white, fontSize: 11),
@@ -180,7 +181,7 @@ class _HomePageState extends State<HomePage> {
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                     ),
-                  ), // Ubah ke Hitam
+                  ),
                   Text(
                     "Top Up ",
                     style: TextStyle(
@@ -196,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                     ),
-                  ), // Ubah ke Hitam
+                  ),
                 ],
               ),
             ],
@@ -213,7 +214,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               SizedBox(width: 10),
-              // Mengubah Ikon Copy menjadi Hitam
               Icon(Icons.copy, color: Colors.black, size: 16),
             ],
           ),
@@ -221,26 +221,20 @@ class _HomePageState extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Logika Tampilan Saldo
               Text(
-                _isBalanceVisible
-                    ? "Rp. 1.500.000"
-                    : "Rp. ••••••••••", // Tampilkan angka atau bintang
+                _isBalanceVisible ? "Rp. 1.500.000" : "Rp. ••••••••••",
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              // Tombol Mata (Interaktif)
               IconButton(
                 onPressed: () {
-                  // Mengubah status visibility saat ditekan
                   setState(() {
                     _isBalanceVisible = !_isBalanceVisible;
                   });
                 },
-                // Mengubah Icon dan Warna menjadi Hitam
                 icon: Icon(
                   _isBalanceVisible
                       ? Icons.visibility_outlined
@@ -489,11 +483,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // --- NAVBAR TANPA LOG PRINT ---
   Widget _buildCustomBottomNav(Color color1, Color color2) {
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.bottomCenter,
       children: [
+        // Background Navbar
         Container(
           height: 70,
           margin: const EdgeInsets.only(top: 20),
@@ -518,15 +514,28 @@ class _HomePageState extends State<HomePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.home, color: Colors.black87, size: 26),
-              ),
+              // Logika icon home: Jika QRIS ditekan, lingkaran hilang
+              _isQrisPressed
+                  ? const Icon(
+                      Icons.home_outlined,
+                      color: Colors.black87,
+                      size: 32,
+                    )
+                  : Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.home,
+                        color: Colors.black87,
+                        size: 26,
+                      ),
+                    ),
+              
               const SizedBox(width: 50),
+              
               const Icon(
                 Icons.settings_outlined,
                 color: Colors.black87,
@@ -535,32 +544,64 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
+
+        // Tombol QRIS Interaktif
         Positioned(
           bottom: 25,
           child: Column(
             children: [
-              Container(
-                width: 65,
-                height: 65,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFB74D),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
+              GestureDetector(
+                onTapDown: (_) {
+                  setState(() {
+                    _isQrisPressed = true;
+                  });
+                },
+                onTapUp: (_) {
+                  setState(() {
+                    _isQrisPressed = false;
+                  });
+                  // SAYA SUDAH MENGHAPUS 'print(...)' DI SINI
+                },
+                onTapCancel: () {
+                  setState(() {
+                    _isQrisPressed = false;
+                  });
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 100),
+                  width: 65,
+                  height: 65,
+                  transform:
+                      _isQrisPressed
+                          ? (Matrix4.identity()..scale(0.95))
+                          : Matrix4.identity(),
+                  transformAlignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color:
+                        _isQrisPressed
+                            ? const Color(0xFFFFF0E0)
+                            : const Color(0xFFFFB74D),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color:
+                          _isQrisPressed
+                              ? Colors.orange.shade300
+                              : Colors.white.withOpacity(0.3),
+                      width: 1,
                     ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.qr_code_scanner,
-                  size: 32,
-                  color: Colors.black87,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.qr_code_scanner,
+                    size: 32,
+                    color: Colors.black87,
+                  ),
                 ),
               ),
               const SizedBox(height: 4),
