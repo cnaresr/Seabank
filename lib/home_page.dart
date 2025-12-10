@@ -8,6 +8,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // Variabel untuk mengontrol status visibilitas saldo
+  bool _isBalanceVisible = true;
+
   @override
   Widget build(BuildContext context) {
     final Color mainOrange = const Color(0xFFFF9F43);
@@ -26,21 +29,21 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    // HEADER (LOGO BARU)
+                    // HEADER
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: _buildHeader(),
                     ),
                     const SizedBox(height: 25),
 
-                    // SALDO CARD
+                    // SALDO CARD (Logika Sembunyikan Saldo ada di sini)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: _buildSaldoCard(mainOrange, darkOrange),
                     ),
                     const SizedBox(height: 25),
 
-                    // MENU ICON (RESPONSIF)
+                    // MENU ICON
                     _buildMenuIcons(context, mainOrange),
 
                     const SizedBox(height: 25),
@@ -105,19 +108,11 @@ class _HomePageState extends State<HomePage> {
 
   // --- WIDGET KOMPONEN ---
 
-  // 1. HEADER (DIPERBARUI: Menggunakan Logo Gambar)
   Widget _buildHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Mengganti Container "S" manual dengan Gambar Aset
-        Image.asset(
-          'assets/images/seabank_logo.png', // Pastikan nama file ini benar
-          width: 50, // Ukuran logo di header (lebih kecil dari landing page)
-          height: 50,
-        ),
-
-        // Ikon Notifikasi & Profil
+        Image.asset('assets/images/seabank_logo.png', width: 50, height: 50),
         Row(
           children: [
             const Icon(Icons.notifications_none_outlined, size: 30),
@@ -137,6 +132,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // --- BAGIAN YANG DIUBAH (SALDO CARD) ---
   Widget _buildSaldoCard(Color color1, Color color2) {
     return Container(
       width: double.infinity,
@@ -172,18 +168,35 @@ class _HomePageState extends State<HomePage> {
               ),
               Row(
                 children: const [
+                  // Mengubah warna tanda tambah (+) menjadi Hitam
                   Text(
-                    "Tambah Saldo +   ",
+                    "Tambah Saldo ",
                     style: TextStyle(color: Colors.white, fontSize: 11),
                   ),
                   Text(
-                    "Top Up +",
+                    "+   ",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ), // Ubah ke Hitam
+                  Text(
+                    "Top Up ",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  Text(
+                    "+",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ), // Ubah ke Hitam
                 ],
               ),
             ],
@@ -200,22 +213,41 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               SizedBox(width: 10),
-              Icon(Icons.copy, color: Colors.white, size: 16),
+              // Mengubah Ikon Copy menjadi Hitam
+              Icon(Icons.copy, color: Colors.black, size: 16),
             ],
           ),
           const SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
+              // Logika Tampilan Saldo
               Text(
-                "Rp. 1.500.000",
-                style: TextStyle(
+                _isBalanceVisible
+                    ? "Rp. 1.500.000"
+                    : "Rp. ••••••••••", // Tampilkan angka atau bintang
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Icon(Icons.visibility_off_outlined, color: Colors.white),
+              // Tombol Mata (Interaktif)
+              IconButton(
+                onPressed: () {
+                  // Mengubah status visibility saat ditekan
+                  setState(() {
+                    _isBalanceVisible = !_isBalanceVisible;
+                  });
+                },
+                // Mengubah Icon dan Warna menjadi Hitam
+                icon: Icon(
+                  _isBalanceVisible
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  color: Colors.black,
+                ),
+              ),
             ],
           ),
         ],
@@ -337,10 +369,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.shopping_bag,
-                          color: Colors.orange,
-                          size: 20,
+                        Image.asset(
+                          'assets/images/shopeepay.png',
+                          width: 30,
+                          height: 30,
                         ),
                         const SizedBox(width: 8),
                         Column(
@@ -374,9 +406,13 @@ class _HomePageState extends State<HomePage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
-                      children: const [
-                        Icon(Icons.circle, color: Colors.purple, size: 18),
-                        SizedBox(width: 5),
+                      children: [
+                        Image.asset(
+                          'assets/images/ovo.png',
+                          width: 30,
+                          height: 30,
+                        ),
+                        const SizedBox(width: 5),
                         Text(
                           "Hubungkan",
                           style: TextStyle(
