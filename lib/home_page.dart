@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'notification_page.dart'; // Pastikan file ini sudah dibuat
+import 'profile_page.dart'; // Pastikan file ini sudah dibuat
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,11 +22,12 @@ class _HomePageState extends State<HomePage> {
     final Color darkOrange = const Color(0xFFFF8800);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFFFFAF5),
       body: SafeArea(
         bottom: false,
         child: Stack(
           children: [
-            // KONTEN SCROLLABLE
+            // --- KONTEN SCROLLABLE ---
             SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 120),
@@ -32,33 +35,34 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    // HEADER
+
+                    // 1. HEADER (Dengan Navigasi ke Notif & Profil)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: _buildHeader(),
                     ),
                     const SizedBox(height: 25),
 
-                    // SALDO CARD
+                    // 2. SALDO CARD (Toggle Visibility)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: _buildSaldoCard(mainOrange, darkOrange),
                     ),
                     const SizedBox(height: 25),
 
-                    // MENU ICON
+                    // 3. MENU ICON (Interaktif tanpa pesan)
                     _buildMenuIcons(context, mainOrange),
 
                     const SizedBox(height: 25),
 
-                    // E-WALLET SECTION
+                    // 4. E-WALLET SECTION
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: _buildEWalletSection(),
                     ),
                     const SizedBox(height: 25),
 
-                    // RIWAYAT TRANSAKSI
+                    // 5. RIWAYAT TRANSAKSI
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: _buildSectionTitle('Riwayat Transaksi'),
@@ -76,7 +80,7 @@ class _HomePageState extends State<HomePage> {
 
                     const SizedBox(height: 25),
 
-                    // TRANSAKSI TERAKHIR
+                    // 6. TRANSAKSI TERAKHIR
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: _buildSectionTitle('Transaksi Terakhir'),
@@ -96,7 +100,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            // BOTTOM NAVBAR
+            // --- BOTTOM NAVIGATION BAR ---
             Positioned(
               bottom: 0,
               left: 0,
@@ -118,16 +122,37 @@ class _HomePageState extends State<HomePage> {
         Image.asset('assets/images/seabank_logo.png', width: 50, height: 50),
         Row(
           children: [
-            const Icon(Icons.notifications_none_outlined, size: 30),
-            const SizedBox(width: 15),
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.black, width: 1.5),
+            // TOMBOL NOTIFIKASI (Navigasi ke NotificationPage)
+            IconButton(
+              icon: const Icon(Icons.notifications_none_outlined, size: 30),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const NotificationPage(),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(width: 5),
+
+            // TOMBOL PROFIL (Navigasi ke ProfilePage)
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilePage()),
+                );
+              },
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.black, width: 1.5),
+                ),
+                child: const Icon(Icons.person_outline, size: 28),
               ),
-              child: const Icon(Icons.person_outline, size: 28),
             ),
           ],
         ),
@@ -264,56 +289,66 @@ class _HomePageState extends State<HomePage> {
         double itemWidth = (availableWidth - 20) / 4;
 
         return SizedBox(
-          height: 100,
+          height: 110,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: menus.length,
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 10),
             itemBuilder: (context, index) {
-              return Container(
+              return SizedBox(
                 width: itemWidth,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.orange.shade400,
-                            Colors.deepOrange.shade400,
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.orange.withOpacity(0.4),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(15),
+                    onTap: () {
+                      // Interaksi kosong (tidak ada SnackBar)
+                      // Nanti bisa diisi logika pindah halaman
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.orange.shade400,
+                                Colors.deepOrange.shade400,
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.orange.withOpacity(0.4),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: Icon(
-                        menus[index]['icon'],
-                        color: Colors.black87,
-                        size: 28,
-                      ),
+                          child: Icon(
+                            menus[index]['icon'],
+                            color: Colors.black87,
+                            size: 28,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          menus[index]['label'],
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      menus[index]['label'],
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                  ),
                 ),
               );
             },
@@ -483,13 +518,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // --- NAVBAR TANPA LOG PRINT ---
   Widget _buildCustomBottomNav(Color color1, Color color2) {
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.bottomCenter,
       children: [
-        // Background Navbar
         Container(
           height: 70,
           margin: const EdgeInsets.only(top: 20),
@@ -514,7 +547,7 @@ class _HomePageState extends State<HomePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              // Logika icon home: Jika QRIS ditekan, lingkaran hilang
+              // Logic: icon home jadi polos jika QRIS ditekan
               _isQrisPressed
                   ? const Icon(
                       Icons.home_outlined,
@@ -533,9 +566,7 @@ class _HomePageState extends State<HomePage> {
                         size: 26,
                       ),
                     ),
-              
               const SizedBox(width: 50),
-              
               const Icon(
                 Icons.settings_outlined,
                 color: Colors.black87,
@@ -544,49 +575,31 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-
-        // Tombol QRIS Interaktif
         Positioned(
           bottom: 25,
           child: Column(
             children: [
               GestureDetector(
-                onTapDown: (_) {
-                  setState(() {
-                    _isQrisPressed = true;
-                  });
-                },
-                onTapUp: (_) {
-                  setState(() {
-                    _isQrisPressed = false;
-                  });
-                  // SAYA SUDAH MENGHAPUS 'print(...)' DI SINI
-                },
-                onTapCancel: () {
-                  setState(() {
-                    _isQrisPressed = false;
-                  });
-                },
+                onTapDown: (_) => setState(() => _isQrisPressed = true),
+                onTapUp: (_) => setState(() => _isQrisPressed = false),
+                onTapCancel: () => setState(() => _isQrisPressed = false),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 100),
                   width: 65,
                   height: 65,
-                  transform:
-                      _isQrisPressed
-                          ? (Matrix4.identity()..scale(0.95))
-                          : Matrix4.identity(),
+                  transform: _isQrisPressed
+                      ? (Matrix4.identity()..scale(0.95))
+                      : Matrix4.identity(),
                   transformAlignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color:
-                        _isQrisPressed
-                            ? const Color(0xFFFFF0E0)
-                            : const Color(0xFFFFB74D),
+                    color: _isQrisPressed
+                        ? const Color(0xFFFFF0E0)
+                        : const Color(0xFFFFB74D),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color:
-                          _isQrisPressed
-                              ? Colors.orange.shade300
-                              : Colors.white.withOpacity(0.3),
+                      color: _isQrisPressed
+                          ? Colors.orange.shade300
+                          : Colors.white.withOpacity(0.3),
                       width: 1,
                     ),
                     boxShadow: [

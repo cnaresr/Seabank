@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'home_page.dart'; // Pastikan file ini ada di folder yang sama
+import 'login_page.dart'; // PENTING: Import halaman Login (tujuan setelah loading)
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
@@ -19,20 +19,20 @@ class _LoadingScreenState extends State<LoadingScreen> {
     _startLoading();
   }
 
-  // Fungsi untuk memulai animasi loading bar
   void _startLoading() {
-    // Update progress bar setiap 50 milidetik
+    // Timer berjalan setiap 50 milidetik untuk mengisi bar
     _timer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
       setState(() {
         if (_progressValue >= 1.0) {
           _timer?.cancel();
-          // Jika sudah penuh (100%), pindah ke HomePage
+
+          // JIKA PENUH: Pindah ke Halaman Login
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
+            MaterialPageRoute(builder: (context) => const LoginPage()),
           );
         } else {
-          _progressValue += 0.02; // Kecepatan pengisian progress bar
+          _progressValue += 0.02; // Kecepatan pengisian
         }
       });
     });
@@ -40,15 +40,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   @override
   void dispose() {
-    _timer
-        ?.cancel(); // Hentikan timer saat widget dibuang untuk mencegah memory leak
+    _timer?.cancel(); // Hentikan timer jika widget ditutup
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Background Gradient Orange yang sama agar konsisten
+      // Background Gradient Orange
       body: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
@@ -61,10 +60,16 @@ class _LoadingScreenState extends State<LoadingScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Spacer(), // Memberi ruang di atas
-            // Logo dari aset gambar (sama dengan landing page)
-            _buildLogo(),
+            const Spacer(), // Dorong konten ke tengah
+            // Logo
+            Image.asset(
+              'assets/images/seabank_logo.png', // Pastikan nama file benar
+              width: 130,
+              height: 130,
+            ),
             const SizedBox(height: 20),
+
+            // Teks Brand
             const Text(
               "SEA BANK",
               style: TextStyle(
@@ -75,20 +80,18 @@ class _LoadingScreenState extends State<LoadingScreen> {
               ),
             ),
 
-            const Spacer(), // Memberi ruang di tengah
+            const Spacer(), // Memberi jarak fleksibel
             // PROGRESS BAR (Loading Bar)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40.0),
               child: Column(
                 children: [
-                  // ClipRRect untuk membuat sudut progress bar membulat
                   ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: LinearProgressIndicator(
                       value: _progressValue,
-                      minHeight: 20, // Tebal bar
-                      backgroundColor:
-                          Colors.white, // Warna background bar (putih)
+                      minHeight: 20, // Ketebalan bar
+                      backgroundColor: Colors.white, // Warna track (putih)
                       valueColor: const AlwaysStoppedAnimation<Color>(
                         Colors.deepOrange,
                       ), // Warna isi (orange tua)
@@ -110,15 +113,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  // Widget logo yang konsisten dengan landing page
-  Widget _buildLogo() {
-    return Image.asset(
-      'assets/images/seabank_logo.png',
-      width: 130,
-      height: 130,
     );
   }
 }
