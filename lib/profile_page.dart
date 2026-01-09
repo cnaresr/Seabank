@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart'; // Untuk tombol Logout
+import 'edit_profile_page.dart'; // Import Halaman Edit
+import 'card_info_page.dart'; // Import Halaman Info Kartu
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -18,18 +20,12 @@ class ProfilePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Image.asset('assets/images/seabank_logo.png', width: 40),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.notifications_none_outlined,
-                      size: 30,
-                    ),
-                    onPressed: () {},
-                  ),
+                  const Icon(Icons.notifications_none_outlined, size: 30),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 15),
 
-              // Saldo Card (Mini Version just for visual consistency with image)
+              // Saldo Card
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
@@ -57,7 +53,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 10),
                     const Text(
                       "8888 1234 5678 907",
                       style: TextStyle(
@@ -94,7 +90,8 @@ class ProfilePage extends StatelessWidget {
               Row(
                 children: [
                   const Icon(
-                    Icons.account_circle,
+                    Icons
+                        .account_circle, // Menggunakan icon filled agar sesuai gambar profil
                     size: 80,
                     color: Colors.black,
                   ),
@@ -167,19 +164,88 @@ class ProfilePage extends StatelessWidget {
                           child: _buildProfileField("NIK", "33400412990006"),
                         ),
                         const SizedBox(width: 10),
+                        // TOMBOL EDIT (NAVIGASI KE EDIT_PROFILE_PAGE)
                         Expanded(
-                          child: _buildOrangeButton(
-                            "Edit",
-                            Icons.chevron_right,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const EditProfilePage(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15,
+                                vertical: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEF6C00),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: const [
+                                  Text(
+                                    "Edit",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 15),
-                    _buildOrangeButton(
-                      "Informasi Kartu",
-                      Icons.chevron_right,
-                      fullWidth: true,
+                    // TOMBOL INFORMASI KARTU (NAVIGASI KE CARD_INFO_PAGE)
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CardInfoPage(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEF6C00),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: const [
+                            Text(
+                              "Informasi Kartu",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Icon(
+                              Icons.chevron_right,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -254,34 +320,6 @@ class ProfilePage extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOrangeButton(
-    String text,
-    IconData icon, {
-    bool fullWidth = false,
-  }) {
-    return Container(
-      width: fullWidth ? double.infinity : null,
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEF6C00),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            text,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Icon(icon, color: Colors.white, size: 18),
         ],
       ),
     );
